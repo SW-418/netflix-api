@@ -11,4 +11,3 @@ spring:
 
   flyway:
     enabled: true
-    default-schema: netflix
