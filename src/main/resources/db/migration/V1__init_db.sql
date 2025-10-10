@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS app_user (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(200) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
+    version BIGINT NOT NULL
+);
