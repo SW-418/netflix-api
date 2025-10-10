@@ -11,3 +11,10 @@ spring:
 
   flyway:
     enabled: true
+
+app:
+  jwt:
+    secret: ${NETFLIX_API_JWT_SECRET}
+    issuer: ${NETFLIX_API_ISSUER}
+    audience: ${NETFLIX_API_AUDIENCE}
+    expirationInMs: 900000 # 15 mins in ms
