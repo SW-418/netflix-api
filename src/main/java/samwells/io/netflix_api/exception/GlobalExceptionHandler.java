@@ -7,8 +7,8 @@ import samwells.io.netflix_api.dto.response.ErrorResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    ResponseEntity<ErrorResponse> handleBadRequest(UserAlreadyExistsException e) {
+    @ExceptionHandler(exception = { UserAlreadyExistsException.class, LoginFailedException.class })
+    ResponseEntity<ErrorResponse> handleBadRequest(Exception e) {
         return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
     }
 

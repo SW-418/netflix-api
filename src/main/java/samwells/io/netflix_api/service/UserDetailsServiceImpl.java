@@ -6,18 +6,20 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import samwells.io.netflix_api.entity.User;
+import samwells.io.netflix_api.exception.LoginFailedException;
 import samwells.io.netflix_api.exception.UserAlreadyExistsException;
 import samwells.io.netflix_api.repository.UserRepository;
+import samwells.io.netflix_api.service.security.JwtService;
 
 @Service
 @AllArgsConstructor
-public class UserDetailsService implements UserDetailsManager {
+public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @Override
     @Transactional
@@ -57,5 +59,16 @@ public class UserDetailsService implements UserDetailsManager {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return null;
+    }
+
+    @Override
+    public String login(String username, String password) {
+        User user = userRepository
+                .findByUsername(username)
+                .orElseThrow(LoginFailedException::new);
+
+        if (!passwordEncoder.matches(password, user.getPassword())) throw new LoginFailedException();
+
+        return jwtService.generateJwt(user.getId());
     }
 }

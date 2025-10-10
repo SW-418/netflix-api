@@ -24,7 +24,7 @@ public class SecurityConfig {
         httpSecurity.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
 
         httpSecurity.authorizeHttpRequests(http -> {
-            http.requestMatchers("/api/v1/auth/register", "/api/v1/auth/register", "/h2-console/**").permitAll();
+            http.requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/h2-console/**").permitAll();
             http.anyRequest().authenticated();
         });
 
