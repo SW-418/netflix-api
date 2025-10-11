@@ -1,7 +1,6 @@
 package samwells.io.netflix_api.service.security;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import samwells.io.netflix_api.config.JwtConfig;
@@ -9,13 +8,13 @@ import samwells.io.netflix_api.config.JwtConfig;
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64;
 import java.util.Date;
 
 @Service
 @AllArgsConstructor
 public class JwtServiceImpl implements JwtService {
     private final JwtConfig jwtConfig;
+    private final SecretKey secretKey;
 
     @Override
     public String generateJwt(Long userId) {
@@ -31,14 +30,8 @@ public class JwtServiceImpl implements JwtService {
                 .subject(subject)
                 .issuer(issuer)
                 .audience().add(audience).and()
-                .signWith(generateKey(), Jwts.SIG.HS256)
+                .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
-    }
-
-    // TODO: Can probably do this in constructor
-    private SecretKey generateKey() {
-        byte[] secretBytes = Base64.getDecoder().decode(jwtConfig.getSecret());
-        return Keys.hmacShaKeyFor(secretBytes);
     }
 
     @Override
