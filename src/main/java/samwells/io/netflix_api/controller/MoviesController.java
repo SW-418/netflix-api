@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import samwells.io.netflix_api.dto.response.MovieResponse;
 import samwells.io.netflix_api.model.Genre;
-import samwells.io.netflix_api.model.Movie;
-import samwells.io.netflix_api.model.MovieFilter;
+import samwells.io.netflix_api.model.movie.Movie;
+import samwells.io.netflix_api.model.movie.MovieFilter;
 import samwells.io.netflix_api.service.movie.MovieService;
 
 import java.util.List;

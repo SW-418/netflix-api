@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -20,6 +21,9 @@ public class Media {
     @Column(name = "name", nullable = false)
     String name;
 
+    @Column(name = "description", nullable = false)
+    String description;
+
     @JoinColumn(name = "genre_id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     Genre genre;
@@ -28,9 +32,12 @@ public class Media {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     MediaType mediaType;
 
+    @Column(name = "release_date", nullable = false, updatable = false)
+    Instant createdAt;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    Instant createdAt;
+    LocalDate releaseDate;
 
     @CreationTimestamp
     @Column(name = "updated_at", nullable = false)

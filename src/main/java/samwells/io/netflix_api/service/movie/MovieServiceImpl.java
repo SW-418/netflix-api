@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import samwells.io.netflix_api.entity.Media;
-import samwells.io.netflix_api.model.Movie;
-import samwells.io.netflix_api.model.MovieFilter;
+import samwells.io.netflix_api.model.movie.Movie;
+import samwells.io.netflix_api.model.movie.MovieFilter;
 import samwells.io.netflix_api.repository.MediaRepository;
 
 import java.util.List;

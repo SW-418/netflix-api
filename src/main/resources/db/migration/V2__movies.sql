@@ -17,8 +17,10 @@ CREATE TABLE IF NOT EXISTS media_type (
 CREATE TABLE IF NOT EXISTS media (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    description VARCHAR(500) NOT NULL,
     genre_id BIGINT NOT NULL,
     media_type_id BIGINT NOT NULL,
+    release_date DATE NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
     version BIGINT NOT NULL,
@@ -34,9 +36,11 @@ CREATE INDEX IF NOT EXISTS idx_media_media_type_id ON media(media_type_id);
 CREATE TABLE IF NOT EXISTS tv_show (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,
+    genre_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
-    version BIGINT NOT NULL
+    version BIGINT NOT NULL,
+    CONSTRAINT fk_tv_show_genre FOREIGN KEY (genre_id) REFERENCES genre(id)
 );
 
 CREATE TABLE IF NOT EXISTS tv_show_season (
@@ -55,7 +59,6 @@ CREATE INDEX IF NOT EXISTS idx_tv_show_id ON tv_show_season(tv_show_id);
 
 CREATE TABLE IF NOT EXISTS tv_show_episode (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
     episode_number INT NOT NULL,
     tv_show_season_id BIGINT NOT NULL,
     media_id BIGINT NOT NULL,
