@@ -5,6 +5,7 @@ import samwells.io.netflix_api.model.Genre;
 public record TvShow(
         Long id,
         String name,
+        String description,
         Genre genre,
         Integer seasons
 ) {
@@ -12,6 +13,7 @@ public record TvShow(
         this (
                 tvShow.getId(),
                 tvShow.getName(),
+                tvShow.getDescription(),
                 tvShow.getGenre().getName(),
                 tvShow.getSeasonCount()
         );

@@ -6,6 +6,7 @@ import samwells.io.netflix_api.model.tvshow.TvShow;
 public record TvShowResponse(
     Long id,
     String name,
+    String description,
     Genre genre,
     Integer seasons
 ) {
@@ -13,6 +14,7 @@ public record TvShowResponse(
         this (
                 tvShow.id(),
                 tvShow.name(),
+                tvShow.description(),
                 tvShow.genre(),
                 tvShow.seasons()
         );
