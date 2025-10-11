@@ -21,6 +21,9 @@ public class TvShow {
     @Column(name = "name", nullable = false, length = 100)
     String name;
 
+    @Column(name = "description")
+    String description;
+
     @JoinColumn(name = "genre_id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     Genre genre;

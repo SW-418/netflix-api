@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -21,12 +22,18 @@ public class TvShowSeason {
     @Column(name = "name", nullable = false, length = 100)
     String name;
 
+    @Column(name = "description")
+    String description;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tv_show_id")
     TvShow tvShow;
 
     @OneToMany(fetch = FetchType.LAZY)
     List<TvShowEpisode> episodes;
+
+    @Column(name = "release_date", nullable = false, updatable = false)
+    LocalDate releaseDate;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

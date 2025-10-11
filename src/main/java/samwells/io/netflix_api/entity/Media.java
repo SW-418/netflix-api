@@ -21,7 +21,7 @@ public class Media {
     @Column(name = "name", nullable = false)
     String name;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     String description;
 
     @JoinColumn(name = "genre_id")
@@ -33,11 +33,11 @@ public class Media {
     MediaType mediaType;
 
     @Column(name = "release_date", nullable = false, updatable = false)
-    Instant createdAt;
+    LocalDate releaseDate;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    LocalDate releaseDate;
+    Instant createdAt;
 
     @CreationTimestamp
     @Column(name = "updated_at", nullable = false)
