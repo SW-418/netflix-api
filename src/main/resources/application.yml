@@ -12,6 +12,10 @@ spring:
   flyway:
     enabled: true
 
+  threads:
+    virtual:
+      enabled: true
+
 app:
   jwt:
     secret: ${NETFLIX_API_JWT_SECRET}
