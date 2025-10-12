@@ -6,12 +6,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import samwells.io.netflix_api.dto.response.TvShowResponse;
 import samwells.io.netflix_api.model.Genre;
+import samwells.io.netflix_api.model.tvshow.TvShow;
 import samwells.io.netflix_api.model.tvshow.TvShowFilter;
 import samwells.io.netflix_api.service.tvshow.TvShowService;
 
@@ -36,5 +34,13 @@ public class TvShowsController {
                 .toList();
 
         return ResponseEntity.ok(shows);
+    }
+
+    @GetMapping("/{id}")
+    ResponseEntity<TvShowResponse> getTvShow(
+            @PathVariable("id") Long id
+    ) {
+        TvShow show = tvShowService.getTvShow(id);
+        return ResponseEntity.ok(new TvShowResponse(show));
     }
 }

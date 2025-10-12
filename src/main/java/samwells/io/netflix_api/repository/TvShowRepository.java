@@ -9,6 +9,8 @@ import samwells.io.netflix_api.entity.TvShow;
 import samwells.io.netflix_api.model.Genre;
 import samwells.io.netflix_api.model.tvshow.TvShowWithMetadata;
 
+import java.util.Optional;
+
 public interface TvShowRepository extends JpaRepository<TvShow, Long> {
     @Query("""
             SELECT new samwells.io.netflix_api.model.tvshow.TvShowWithMetadata(
@@ -29,4 +31,21 @@ public interface TvShowRepository extends JpaRepository<TvShow, Long> {
             @Param("genre") Genre genre,
             Pageable pageable
     );
+
+    @Query("""
+            Select new samwells.io.netflix_api.model.tvshow.TvShowWithMetadata(
+                tv.id,
+                tv.name,
+                tv.description,
+                tv.genre.name,
+                COUNT(DISTINCT(s)),
+                COUNT(DISTINCT(e))
+            )
+            FROM TvShow tv
+            LEFT JOIN tv.seasons s
+            LEFT JOIN s.episodes e
+            WHERE tv.id = :id
+            GROUP BY tv.id, tv.name, tv.description, tv.genre.name
+            """)
+    Optional<TvShowWithMetadata> getTvShow(@Param("id") Long id);
 }

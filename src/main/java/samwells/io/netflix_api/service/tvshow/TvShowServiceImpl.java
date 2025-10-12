@@ -2,8 +2,10 @@ package samwells.io.netflix_api.service.tvshow;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import samwells.io.netflix_api.exception.ResourceNotFoundException;
 import samwells.io.netflix_api.model.tvshow.TvShow;
 import samwells.io.netflix_api.model.tvshow.TvShowFilter;
+import samwells.io.netflix_api.model.tvshow.TvShowWithMetadata;
 import samwells.io.netflix_api.repository.TvShowRepository;
 
 import java.util.List;
@@ -20,5 +22,14 @@ public class TvShowServiceImpl implements TvShowService {
                 .stream()
                 .map(TvShow::new)
                 .toList();
+    }
+
+    @Override
+    public TvShow getTvShow(Long id) {
+        TvShowWithMetadata show = tvShowRepository
+                .getTvShow(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id));
+
+        return new TvShow(show);
     }
 }
