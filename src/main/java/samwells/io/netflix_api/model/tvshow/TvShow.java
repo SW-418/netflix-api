@@ -7,15 +7,17 @@ public record TvShow(
         String name,
         String description,
         Genre genre,
-        Integer seasons
+        Long seasons,
+        Long episodes
 ) {
-    public TvShow(samwells.io.netflix_api.entity.TvShow tvShow) {
+    public TvShow(TvShowWithMetadata tvShow) {
         this (
-                tvShow.getId(),
-                tvShow.getName(),
-                tvShow.getDescription(),
-                tvShow.getGenre().getName(),
-                tvShow.getSeasonCount()
+                tvShow.id(),
+                tvShow.name(),
+                tvShow.description(),
+                tvShow.genre(),
+                tvShow.seasonCount(),
+                tvShow.episodeCount()
         );
     }
 }

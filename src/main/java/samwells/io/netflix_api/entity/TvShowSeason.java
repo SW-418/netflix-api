@@ -29,7 +29,7 @@ public class TvShowSeason {
     @JoinColumn(name = "tv_show_id")
     TvShow tvShow;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "season", fetch = FetchType.LAZY)
     List<TvShowEpisode> episodes;
 
     @Column(name = "release_date", nullable = false, updatable = false)

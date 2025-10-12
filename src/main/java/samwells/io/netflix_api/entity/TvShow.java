@@ -28,7 +28,7 @@ public class TvShow {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     Genre genre;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "tvShow", fetch = FetchType.LAZY)
     List<TvShowSeason> seasons;
 
     @Transient

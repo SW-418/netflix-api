@@ -24,6 +24,10 @@ public class TvShowEpisode {
     @JoinColumn(name = "media_id")
     Media media;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tv_show_season_id")
+    TvShowSeason season;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     Instant createdAt;

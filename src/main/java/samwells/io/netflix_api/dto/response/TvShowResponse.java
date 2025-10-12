@@ -8,7 +8,8 @@ public record TvShowResponse(
     String name,
     String description,
     Genre genre,
-    Integer seasons
+    Long seasons,
+    Long episodes
 ) {
     public TvShowResponse(TvShow tvShow) {
         this (
@@ -16,7 +17,8 @@ public record TvShowResponse(
                 tvShow.name(),
                 tvShow.description(),
                 tvShow.genre(),
-                tvShow.seasons()
+                tvShow.seasons(),
+                tvShow.episodes()
         );
     }
 }
