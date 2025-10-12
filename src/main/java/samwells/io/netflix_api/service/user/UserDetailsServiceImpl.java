@@ -1,4 +1,4 @@
-package samwells.io.netflix_api.service;
+package samwells.io.netflix_api.service.user;
 
 import lombok.AllArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;

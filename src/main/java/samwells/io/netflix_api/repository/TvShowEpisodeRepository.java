@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import samwells.io.netflix_api.entity.TvShowEpisode;
 
+import java.util.Optional;
+
 public interface TvShowEpisodeRepository extends JpaRepository<TvShowEpisode, Long> {
     @Query("""
             SELECT new samwells.io.netflix_api.model.tvshow.TvShowEpisode(
@@ -29,4 +31,12 @@ public interface TvShowEpisodeRepository extends JpaRepository<TvShowEpisode, Lo
             @Param("seasonId") Long seasonId,
             Pageable pageable
     );
+
+    @Query("""
+            SELECT e
+            FROM TvShowEpisode e
+            JOIN e.media m
+            WHERE e.id = :id
+            """)
+    Optional<TvShowEpisode> getTvShowEpisodeWithMedia(@Param("id") Long id);
 }

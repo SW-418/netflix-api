@@ -10,7 +10,12 @@ import samwells.io.netflix_api.dto.response.ErrorResponse;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(exception = { UserAlreadyExistsException.class, LoginFailedException.class })
+    @ExceptionHandler(exception = { DataConflictException.class })
+    ResponseEntity<ErrorResponse> handleConflict(Exception e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(exception = { UserAlreadyExistsException.class, LoginFailedException.class, BadRequestException.class })
     ResponseEntity<ErrorResponse> handleBadRequest(Exception e) {
         return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
     }

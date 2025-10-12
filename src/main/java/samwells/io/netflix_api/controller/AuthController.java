@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import samwells.io.netflix_api.dto.request.UserCredentialsRequest;
 import samwells.io.netflix_api.dto.response.LoginResponse;
-import samwells.io.netflix_api.service.UserDetailsServiceImpl;
+import samwells.io.netflix_api.service.user.UserDetailsServiceImpl;
 
 import java.util.List;
 
