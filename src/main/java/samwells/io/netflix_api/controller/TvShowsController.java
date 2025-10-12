@@ -8,6 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import samwells.io.netflix_api.dto.response.TvShowResponse;
+import samwells.io.netflix_api.dto.response.TvShowSeasonResponse;
 import samwells.io.netflix_api.model.Genre;
 import samwells.io.netflix_api.model.tvshow.TvShow;
 import samwells.io.netflix_api.model.tvshow.TvShowFilter;
@@ -42,5 +43,19 @@ public class TvShowsController {
     ) {
         TvShow show = tvShowService.getTvShow(id);
         return ResponseEntity.ok(new TvShowResponse(show));
+    }
+
+    @GetMapping("/{id}/seasons")
+    ResponseEntity<List<TvShowSeasonResponse>> getTvShowSeasons(
+            @PathVariable("id") Long id,
+            @PageableDefault Pageable pageable
+    ) {
+        List<TvShowSeasonResponse> seasons = tvShowService
+                .getTvShowSeasons(id, pageable)
+                .stream()
+                .map(TvShowSeasonResponse::new)
+                .toList();
+
+        return ResponseEntity.ok(seasons);
     }
 }
