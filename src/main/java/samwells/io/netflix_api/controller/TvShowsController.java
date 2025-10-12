@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import samwells.io.netflix_api.dto.response.TvShowEpisodeResponse;
 import samwells.io.netflix_api.dto.response.TvShowResponse;
 import samwells.io.netflix_api.dto.response.TvShowSeasonResponse;
 import samwells.io.netflix_api.model.Genre;
@@ -45,15 +46,30 @@ public class TvShowsController {
         return ResponseEntity.ok(new TvShowResponse(show));
     }
 
-    @GetMapping("/{id}/seasons")
+    @GetMapping("/{tvShowId}/seasons")
     ResponseEntity<List<TvShowSeasonResponse>> getTvShowSeasons(
-            @PathVariable("id") Long id,
+            @PathVariable("tvShowId") Long tvShowId,
             @PageableDefault Pageable pageable
     ) {
         List<TvShowSeasonResponse> seasons = tvShowService
-                .getTvShowSeasons(id, pageable)
+                .getTvShowSeasons(tvShowId, pageable)
                 .stream()
                 .map(TvShowSeasonResponse::new)
+                .toList();
+
+        return ResponseEntity.ok(seasons);
+    }
+
+    @GetMapping("/{tvShowId}/seasons/{seasonId}/episodes")
+    ResponseEntity<List<TvShowEpisodeResponse>> getTvShowSeasonEpisodes(
+            @PathVariable("tvShowId") Long tvShowId,
+            @PathVariable("seasonId") Long seasonId,
+            @PageableDefault Pageable pageable
+    ) {
+        List<TvShowEpisodeResponse> seasons = tvShowService
+                .getTvShowEpisodes(tvShowId, seasonId, pageable)
+                .stream()
+                .map(TvShowEpisodeResponse::new)
                 .toList();
 
         return ResponseEntity.ok(seasons);

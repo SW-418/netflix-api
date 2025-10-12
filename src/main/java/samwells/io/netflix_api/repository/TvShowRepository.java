@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import samwells.io.netflix_api.entity.TvShow;
 import samwells.io.netflix_api.model.Genre;
-import samwells.io.netflix_api.model.tvshow.TvShowSeasonWithMetadata;
 import samwells.io.netflix_api.model.tvshow.TvShowWithMetadata;
 
 import java.util.Optional;
@@ -49,20 +48,4 @@ public interface TvShowRepository extends JpaRepository<TvShow, Long> {
             GROUP BY tv.id, tv.name, tv.description, tv.genre.name
             """)
     Optional<TvShowWithMetadata> getTvShow(@Param("id") Long id);
-
-    @Query("""
-            SELECT new samwells.io.netflix_api.model.tvshow.TvShowSeasonWithMetadata(
-                tvs.id,
-                tvs.name,
-                tvs.description,
-                tvs.releaseDate,
-                COUNT(e)
-            )
-            FROM TvShowSeason tvs
-            JOIN tvs.tvShow tv
-            LEFT JOIN tvs.episodes e
-            WHERE tv.id = :id
-            GROUP BY tvs.id, tvs.name, tvs.description, tvs.releaseDate
-            """)
-    Page<TvShowSeasonWithMetadata> getTvShowSeasons(@Param("id") Long id, Pageable pageable);
 }
