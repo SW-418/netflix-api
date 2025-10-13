@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +16,7 @@ import samwells.io.netflix_api.model.Genre;
 import samwells.io.netflix_api.model.movie.Movie;
 import samwells.io.netflix_api.model.movie.MovieFilter;
 import samwells.io.netflix_api.service.movie.MovieService;
+import samwells.io.netflix_api.validation.ValidEnum;
 
 import java.util.List;
 
@@ -26,11 +28,12 @@ public class MoviesController {
 
     @GetMapping
     ResponseEntity<List<MovieResponse>> getMovies(
-            @RequestParam(required = false) Genre genre,
+            @RequestParam(required = false) @Validated @ValidEnum(enumClass = Genre.class, required = false) String genre,
             @RequestParam(required = false) @Min(1) @Max(5) Integer minRating,
             @PageableDefault(page = 0, size = 15) Pageable pageable
     ) {
-        List<Movie> movies = movieService.getMovies(new MovieFilter(genre, minRating, pageable));
+        Genre parsedGenre = genre == null ? null : Genre.valueOf(genre);
+        List<Movie> movies = movieService.getMovies(new MovieFilter(parsedGenre, minRating, pageable));
         return ResponseEntity.ok(movies.stream().map(MovieResponse::new).toList());
     }
 }

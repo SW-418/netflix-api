@@ -14,6 +14,7 @@ import samwells.io.netflix_api.model.Genre;
 import samwells.io.netflix_api.model.tvshow.TvShow;
 import samwells.io.netflix_api.model.tvshow.TvShowFilter;
 import samwells.io.netflix_api.service.tvshow.TvShowService;
+import samwells.io.netflix_api.validation.ValidEnum;
 
 import java.util.List;
 
@@ -25,12 +26,13 @@ public class TvShowsController {
 
     @GetMapping
     ResponseEntity<List<TvShowResponse>> getTvShows(
-            @RequestParam(required = false) Genre genre,
+            @RequestParam(required = false) @ValidEnum(enumClass = Genre.class, required = false) String genre,
             @RequestParam(required = false) @Min(1) @Max(5) Integer minRating,
             @PageableDefault(page = 0, size = 15) Pageable pageable
     ) {
+        Genre parsedGenre = genre == null ? null : Genre.valueOf(genre);
         List<TvShowResponse> shows = tvShowService
-                .getTvShows(new TvShowFilter(genre, minRating, pageable))
+                .getTvShows(new TvShowFilter(parsedGenre, minRating, pageable))
                 .stream()
                 .map(TvShowResponse::new)
                 .toList();
