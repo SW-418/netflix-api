@@ -17,8 +17,9 @@ public class MediaType {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "name", nullable = false, unique = true, length = 100)
-    String name;
+    samwells.io.netflix_api.model.MediaType name;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

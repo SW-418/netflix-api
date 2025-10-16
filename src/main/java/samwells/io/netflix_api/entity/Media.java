@@ -24,6 +24,9 @@ public class Media {
     @Column(name = "description")
     String description;
 
+    @OneToOne(mappedBy = "media")
+    TvShowEpisode tvShowEpisode;
+
     @JoinColumn(name = "genre_id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     Genre genre;
