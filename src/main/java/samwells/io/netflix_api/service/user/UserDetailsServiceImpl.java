@@ -71,4 +71,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return jwtService.generateJwt(user.getId());
     }
+
+    @Override
+    public boolean userExists(Long userId) {
+        return userRepository.existsById(userId);
+    }
 }
