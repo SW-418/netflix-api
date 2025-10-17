@@ -9,13 +9,16 @@ import org.springframework.transaction.annotation.Transactional;
 import samwells.io.netflix_api.entity.*;
 import samwells.io.netflix_api.exception.DataConflictException;
 import samwells.io.netflix_api.exception.ResourceNotFoundException;
+import samwells.io.netflix_api.model.PaginationCursor;
+import samwells.io.netflix_api.model.history.PaginatedWatchHistory;
 import samwells.io.netflix_api.model.history.WatchHistory;
 import samwells.io.netflix_api.repository.MediaRepository;
 import samwells.io.netflix_api.repository.TvShowEpisodeRepository;
 import samwells.io.netflix_api.repository.UserRepository;
 import samwells.io.netflix_api.repository.UserWatchHistoryRepository;
+import samwells.io.netflix_api.util.PaginationUtil;
 
-import java.util.ArrayList;
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -65,7 +68,25 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public List<WatchHistory> getWatchHistory(Long userId, Pageable pageable) {
-        return userWatchHistoryRepository.getWatchHistory(userId, pageable).toList();
+    public PaginatedWatchHistory getWatchHistory(Long userId, int size, String cursor) {
+        if (cursor == null || cursor.isEmpty()) return getWatchHistory(userId, null, null, size);
+
+        PaginationCursor paginationCursor = PaginationUtil.decode(cursor);
+        return getWatchHistory(userId, paginationCursor.timestamp(), paginationCursor.id(), size);
+    }
+
+    private PaginatedWatchHistory getWatchHistory(Long userId, Instant afterTimestamp, Long afterId, int size) {
+         List<WatchHistory> watchHistory = userWatchHistoryRepository.getWatchHistory(
+                userId,
+                afterTimestamp,
+                afterId,
+                Pageable.ofSize(size)
+        ).toList();
+
+         if (watchHistory.isEmpty()) return new PaginatedWatchHistory(watchHistory, null);
+
+         return new PaginatedWatchHistory(
+                 watchHistory, PaginationUtil.encode(watchHistory.getLast().watchedAt(), watchHistory.getLast().id())
+         );
     }
 }

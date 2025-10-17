@@ -6,8 +6,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import samwells.io.netflix_api.dto.request.history.UserHistoryRequest;
+import samwells.io.netflix_api.dto.response.CursorPaginatedResponse;
 import samwells.io.netflix_api.dto.response.history.WatchHistoryResponse;
 import samwells.io.netflix_api.exception.BadRequestException;
+import samwells.io.netflix_api.model.history.PaginatedWatchHistory;
 import samwells.io.netflix_api.service.history.HistoryService;
 import samwells.io.netflix_api.util.UserUtil;
 
@@ -32,17 +34,17 @@ public class HistoryController {
     }
 
     @GetMapping
-    ResponseEntity<List<WatchHistoryResponse>> getHistory(
-            @PageableDefault @RequestParam(required = false) Pageable pageable
+    CursorPaginatedResponse<List<WatchHistoryResponse>> getHistory(
+            @RequestParam(required = false, defaultValue = "5") int size,
+            @RequestParam(required = false) String cursor
     ) {
         Long userId = UserUtil.getUserId();
-        List<WatchHistoryResponse> watchHistory = historyService
-                .getWatchHistory(userId, pageable)
-                .stream()
-                .map(WatchHistoryResponse::new)
-                .toList();
+        PaginatedWatchHistory watchHistory = historyService.getWatchHistory(userId, size, cursor);
 
-        return ResponseEntity.ok(watchHistory);
+        return new CursorPaginatedResponse<>(
+                watchHistory.watchHistory().stream().map(WatchHistoryResponse::new).toList(),
+                watchHistory.cursor()
+        );
     }
 
     private void validateUserHistoryRequest(UserHistoryRequest userHistoryRequest) {

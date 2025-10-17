@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import samwells.io.netflix_api.entity.UserWatchHistory;
 import samwells.io.netflix_api.model.history.WatchHistory;
 
+import java.time.Instant;
+
 public interface UserWatchHistoryRepository extends JpaRepository<UserWatchHistory, Long> {
     @Query("""
             SELECT DISTINCT new samwells.io.netflix_api.model.history.WatchHistory(
@@ -23,12 +25,16 @@ public interface UserWatchHistoryRepository extends JpaRepository<UserWatchHisto
             LEFT JOIN tve.season tvs
             LEFT JOIN tvs.tvShow tv
             WHERE
-                u.id = :userId
+                u.id = :userId AND
+                (:afterTimestamp IS NULL OR :afterId IS NULL) OR
+                (:afterTimestamp, :afterId) > (wh.createdAt, wh.id)
             ORDER BY
                 wh.createdAt DESC
             """)
     Page<WatchHistory> getWatchHistory(
             @Param("userId") Long userId,
+            @Param("afterTimestamp") Instant afterTimestamp,
+            @Param("afterId") Long afterId,
             Pageable pageable
     );
 }
