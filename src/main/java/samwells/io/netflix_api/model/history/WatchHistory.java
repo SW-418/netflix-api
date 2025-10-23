@@ -6,7 +6,6 @@ import java.time.Instant;
 
 public record WatchHistory(
         Long id,
-        // Movie Name OR TV show name
         String name,
         MediaType mediaType,
         Instant watchedAt
