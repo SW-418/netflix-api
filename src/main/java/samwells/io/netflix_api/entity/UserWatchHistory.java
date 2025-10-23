@@ -36,4 +36,9 @@ public class UserWatchHistory {
     @Version
     @Column(nullable = false)
     Long version;
+
+    public UserWatchHistory(User user, Media media) {
+        this.user = user;
+        this.media = media;
+    }
 }

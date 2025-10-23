@@ -1,24 +1,25 @@
 package samwells.io.netflix_api.service.history;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import samwells.io.netflix_api.entity.*;
-import samwells.io.netflix_api.exception.DataConflictException;
 import samwells.io.netflix_api.exception.ResourceNotFoundException;
+import samwells.io.netflix_api.exception.UnsupportedMediaTypeException;
+import samwells.io.netflix_api.exception.UserNotFoundException;
+import samwells.io.netflix_api.model.MediaType;
 import samwells.io.netflix_api.model.PaginationCursor;
 import samwells.io.netflix_api.model.history.PaginatedWatchHistory;
 import samwells.io.netflix_api.model.history.WatchHistory;
 import samwells.io.netflix_api.repository.MediaRepository;
-import samwells.io.netflix_api.repository.TvShowEpisodeRepository;
 import samwells.io.netflix_api.repository.UserRepository;
 import samwells.io.netflix_api.repository.UserWatchHistoryRepository;
 import samwells.io.netflix_api.util.PaginationUtil;
 
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.List;
 
 @Service
@@ -27,43 +28,22 @@ public class HistoryServiceImpl implements HistoryService {
     private final UserWatchHistoryRepository userWatchHistoryRepository;
     private final MediaRepository mediaRepository;
     private final UserRepository userRepository;
-    private final TvShowEpisodeRepository tvShowEpisodeRepository;
+    private final EnumSet<MediaType> ALLOWABLE_MEDIA_TYPES = EnumSet.of(MediaType.MOVIE, MediaType.TV_SHOW_EPISODE);
 
     @Override
     @Transactional
-    public void addMovieHistory(Long movieId, Long userId) {
+    public void addHistory(Long mediaId, Long userId) {
         try {
-            Media media = mediaRepository.getReferenceById(movieId);
-            User user = userRepository.getReferenceById(userId);
+            Media media = mediaRepository.getReferenceById(mediaId);
+            if (!ALLOWABLE_MEDIA_TYPES.contains(media.getMediaType().getName())) throw new UnsupportedMediaTypeException(mediaId);
 
-            UserWatchHistory watchHistory = new UserWatchHistory();
-            watchHistory.setMedia(media);
-            watchHistory.setUser(user);
+            User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+            UserWatchHistory watchHistory = new UserWatchHistory(user, media);
 
             userWatchHistoryRepository.save(watchHistory);
-        } catch (DataIntegrityViolationException e) {
-            if (e.getCause() instanceof ConstraintViolationException) throw new DataConflictException(String.format("Movie %s has already been marked as watched.", movieId));
-            throw e;
-        }
-    }
-
-    @Override
-    @Transactional
-    public void addTvShowEpisodeHistory(Long showEpisodeId, Long userId) {
-        try {
-            TvShowEpisode tvShow = tvShowEpisodeRepository.getTvShowEpisodeWithMedia(showEpisodeId)
-                    .orElseThrow(() -> new ResourceNotFoundException(showEpisodeId));
-            Media media = mediaRepository.getReferenceById(tvShow.getMedia().getId());
-            User user = userRepository.getReferenceById(userId);
-
-            UserWatchHistory watchHistory = new UserWatchHistory();
-            watchHistory.setMedia(media);
-            watchHistory.setUser(user);
-
-            userWatchHistoryRepository.save(watchHistory);
-        } catch (DataIntegrityViolationException e) {
-            if (e.getCause() instanceof ConstraintViolationException) throw new DataConflictException(String.format("Show %s has already been marked as watched.", showEpisodeId));
-            throw e;
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(mediaId);
         }
     }
 

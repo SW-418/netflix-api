@@ -5,38 +5,36 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import samwells.io.netflix_api.entity.TvShowEpisode;
+import samwells.io.netflix_api.entity.Media;
 
 import java.util.Optional;
 
-public interface TvShowEpisodeRepository extends JpaRepository<TvShowEpisode, Long> {
+public interface TvShowEpisodeRepository extends JpaRepository<Media, Long> {
     @Query("""
-            SELECT new samwells.io.netflix_api.model.tvshow.TvShowEpisode(
-                e.id,
-                m.name,
-                m.description,
-                e.episodeNumber,
-                m.releaseDate
-            )
-            FROM TvShowEpisode e
-            JOIN e.media m
-            JOIN e.season s
-            JOIN s.tvShow tv
+            SELECT
+                episode
+            FROM
+                Media episode
+            JOIN
+                episode.parent season
             WHERE
-                tv.id = :showId AND
-                s.id = :seasonId
+                season.id = :seasonId AND
+                season.mediaType.name = 'TV_SHOW_SEASON' AND
+                episode.mediaType.name = 'TV_SHOW_EPISODE'
             """)
-    Page<samwells.io.netflix_api.model.tvshow.TvShowEpisode> getTvShowEpisodes(
-            @Param("showId") Long showId,
+    Page<Media> getTvShowEpisodes(
             @Param("seasonId") Long seasonId,
             Pageable pageable
     );
 
     @Query("""
-            SELECT e
-            FROM TvShowEpisode e
-            JOIN e.media m
-            WHERE e.id = :id
+            SELECT
+                episode
+            FROM
+                Media episode
+            WHERE
+                episode.id = :id AND
+                episode.mediaType.name = 'TV_SHOW_EPISODE'
             """)
-    Optional<TvShowEpisode> getTvShowEpisodeWithMedia(@Param("id") Long id);
+    Optional<Media> getTvShowEpisode(@Param("id") Long id);
 }

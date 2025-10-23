@@ -76,4 +76,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public boolean userExists(Long userId) {
         return userRepository.existsById(userId);
     }
+
+    @Override
+    public User loadUserById(Long userId) {
+        return userRepository.getReferenceById(userId);
+    }
 }

@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.method.MethodValidationResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
@@ -21,18 +23,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(e.getMessage()));
     }
 
-    @ExceptionHandler(exception = { UserAlreadyExistsException.class, LoginFailedException.class, BadRequestException.class })
+    @ExceptionHandler(exception = { UserAlreadyExistsException.class, LoginFailedException.class, BadRequestException.class, UnsupportedMediaTypeException.class })
     ResponseEntity<ErrorResponse> handleBadRequest(Exception e) {
         return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
     }
 
-    @ExceptionHandler(exception = { UsernameNotFoundException.class })
+    @ExceptionHandler(exception = { UsernameNotFoundException.class, UserNotFoundException.class })
     ResponseEntity<ErrorResponse> handleUnauthorized(Exception e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(e.getMessage()));
     }
 
-    @ExceptionHandler(exception = { HandlerMethodValidationException.class })
-    ResponseEntity<ErrorResponse> handleBadRequestValidation(HandlerMethodValidationException e) {
+    @ExceptionHandler(exception = { HandlerMethodValidationException.class, MethodArgumentNotValidException.class })
+    ResponseEntity<ErrorResponse> handleBadRequestValidation(MethodValidationResult e) {
         List<String> errors = e.getAllErrors().stream().map(MessageSourceResolvable::getDefaultMessage).toList();
         return ResponseEntity.badRequest().body(new ErrorResponse("Validation error", errors));
     }

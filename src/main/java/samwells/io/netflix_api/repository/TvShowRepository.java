@@ -5,27 +5,30 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import samwells.io.netflix_api.entity.TvShow;
+import samwells.io.netflix_api.entity.Media;
 import samwells.io.netflix_api.model.Genre;
 import samwells.io.netflix_api.model.tvshow.TvShowWithMetadata;
 
 import java.util.Optional;
 
-public interface TvShowRepository extends JpaRepository<TvShow, Long> {
+public interface TvShowRepository extends JpaRepository<Media, Long> {
     @Query("""
-            SELECT new samwells.io.netflix_api.model.tvshow.TvShowWithMetadata(
+            Select new samwells.io.netflix_api.model.tvshow.TvShowWithMetadata(
                 tv.id,
                 tv.name,
                 tv.description,
                 tv.genre.name,
-                COUNT(DISTINCT(s)),
-                COUNT(DISTINCT(e))
+                COUNT(DISTINCT(tvs.id)),
+                COUNT(DISTINCT(tve.id))
             )
-            FROM TvShow tv
-            LEFT JOIN tv.seasons s
-            LEFT JOIN s.episodes e
-            WHERE (:genre IS NULL OR tv.genre.name = :genre)
-            GROUP BY tv.id, tv.name, tv.description, tv.genre.name
+            FROM Media tv
+            JOIN tv.children tvs
+            LEFT JOIN tvs.children tve
+            WHERE
+                (:genre IS NULL OR tv.genre.name = :genre) AND
+                tv.mediaType.name = 'TV_SHOW'
+            GROUP BY
+                tv.id, tv.name, tv.description, tv.genre.name
             """)
     Page<TvShowWithMetadata> getTvShows(
             @Param("genre") Genre genre,
@@ -38,14 +41,17 @@ public interface TvShowRepository extends JpaRepository<TvShow, Long> {
                 tv.name,
                 tv.description,
                 tv.genre.name,
-                COUNT(DISTINCT(s)),
-                COUNT(DISTINCT(e))
+                COUNT(DISTINCT(tvs.id)),
+                COUNT(DISTINCT(tve.id))
             )
-            FROM TvShow tv
-            LEFT JOIN tv.seasons s
-            LEFT JOIN s.episodes e
-            WHERE tv.id = :id
-            GROUP BY tv.id, tv.name, tv.description, tv.genre.name
+            FROM Media tv
+            JOIN tv.children tvs
+            LEFT JOIN tvs.children tve
+            WHERE
+                tv.id = :id AND
+                tv.mediaType.name = 'TV_SHOW'
+            GROUP BY
+                tv.id, tv.name, tv.description, tv.genre.name
             """)
     Optional<TvShowWithMetadata> getTvShow(@Param("id") Long id);
 }

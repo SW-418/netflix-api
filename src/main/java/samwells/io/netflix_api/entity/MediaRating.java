@@ -7,35 +7,26 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
-import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "tv_show")
-public class TvShow {
+@Table(name = "media_rating")
+public class MediaRating {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "name", nullable = false, length = 100)
-    String name;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    User user;
 
-    @Column(name = "description")
-    String description;
+    @ManyToOne
+    @JoinColumn(name = "media_id")
+    Media media;
 
-    @JoinColumn(name = "genre_id")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    Genre genre;
-
-    @OneToMany(mappedBy = "tvShow", fetch = FetchType.LAZY)
-    List<TvShowSeason> seasons;
-
-    @Transient
-    Integer seasonCount;
-
-    @Transient
-    Integer episodeCount;
+    @Column(nullable = false)
+    int score;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -14,18 +14,16 @@ public interface UserWatchHistoryRepository extends JpaRepository<UserWatchHisto
     @Query("""
             SELECT DISTINCT new samwells.io.netflix_api.model.history.WatchHistory(
                 wh.id,
-                COALESCE(tv.name, m.name),
+                m.name,
                 m.mediaType.name,
                 wh.createdAt
             )
             FROM UserWatchHistory wh
             JOIN wh.user u
             JOIN wh.media m
-            LEFT JOIN m.tvShowEpisode tve
-            LEFT JOIN tve.season tvs
-            LEFT JOIN tvs.tvShow tv
             WHERE
                 u.id = :userId AND
+                (m.mediaType.name = 'MOVIE' OR m.mediaType.name = 'TV_SHOW_EPISODE') AND
                 (:afterTimestamp IS NULL OR :afterId IS NULL) OR
                 (:afterTimestamp, :afterId) > (wh.createdAt, wh.id)
             ORDER BY

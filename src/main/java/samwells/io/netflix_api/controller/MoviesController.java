@@ -1,5 +1,6 @@
 package samwells.io.netflix_api.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -7,15 +8,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import samwells.io.netflix_api.dto.request.RatingRequest;
 import samwells.io.netflix_api.dto.response.MovieResponse;
 import samwells.io.netflix_api.model.Genre;
 import samwells.io.netflix_api.model.movie.Movie;
 import samwells.io.netflix_api.model.movie.MovieFilter;
 import samwells.io.netflix_api.service.movie.MovieService;
+import samwells.io.netflix_api.service.ratings.RatingsService;
 import samwells.io.netflix_api.validation.ValidEnum;
 
 import java.util.List;
@@ -25,6 +25,7 @@ import java.util.List;
 @RequestMapping("/api/v1/movies")
 public class MoviesController {
     private final MovieService movieService;
+    private final RatingsService ratingsService;
 
     @GetMapping
     ResponseEntity<List<MovieResponse>> getMovies(
@@ -35,5 +36,12 @@ public class MoviesController {
         Genre parsedGenre = genre == null ? null : Genre.valueOf(genre);
         List<Movie> movies = movieService.getMovies(new MovieFilter(parsedGenre, minRating, pageable));
         return ResponseEntity.ok(movies.stream().map(MovieResponse::new).toList());
+    }
+
+    @PostMapping("/{id}/ratings")
+    ResponseEntity<Void> rateMovie(@Valid RatingRequest request) {
+
+
+        return ResponseEntity.ok().build();
     }
 }

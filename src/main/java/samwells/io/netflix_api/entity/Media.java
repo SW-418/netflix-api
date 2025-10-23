@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,8 +25,12 @@ public class Media {
     @Column(name = "description")
     String description;
 
-    @OneToOne(mappedBy = "media")
-    TvShowEpisode tvShowEpisode;
+    @JoinColumn(name = "parent_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    Media parent;
+
+    @OneToMany(mappedBy = "parent")
+    List<Media> children;
 
     @JoinColumn(name = "genre_id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)

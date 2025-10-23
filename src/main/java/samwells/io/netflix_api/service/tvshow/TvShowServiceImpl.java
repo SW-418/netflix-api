@@ -57,8 +57,10 @@ public class TvShowServiceImpl implements TvShowService {
         if (!tvShowSeasonRepository.existsByShowIdAndSeasonId(tvShowId, seasonId)) throw new ResourceNotFoundException(seasonId);
 
         return tvShowEpisodeRepository
-                .getTvShowEpisodes(tvShowId, seasonId, pageable)
+                .getTvShowEpisodes(seasonId, pageable)
                 .stream()
+                // TODO: Fix episode numbers
+                .map(m -> new TvShowEpisode(m.getId(), m.getName(), m.getDescription(), 1, m.getReleaseDate()))
                 .toList();
     }
 }

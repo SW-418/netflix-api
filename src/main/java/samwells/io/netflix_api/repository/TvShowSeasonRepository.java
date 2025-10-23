@@ -5,34 +5,46 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import samwells.io.netflix_api.entity.TvShowSeason;
+import samwells.io.netflix_api.entity.Media;
 import samwells.io.netflix_api.model.tvshow.TvShowSeasonWithMetadata;
 
-public interface TvShowSeasonRepository extends JpaRepository<TvShowSeason, Long> {
+public interface TvShowSeasonRepository extends JpaRepository<Media, Long> {
     @Query("""
             SELECT new samwells.io.netflix_api.model.tvshow.TvShowSeasonWithMetadata(
-                tvs.id,
-                tvs.name,
-                tvs.description,
-                tvs.releaseDate,
-                COUNT(e)
+                seasons.id,
+                seasons.name,
+                seasons.description,
+                seasons.releaseDate,
+                COUNT(episodes)
             )
-            FROM TvShowSeason tvs
-            JOIN tvs.tvShow tv
-            LEFT JOIN tvs.episodes e
-            WHERE tv.id = :id
-            GROUP BY tvs.id, tvs.name, tvs.description, tvs.releaseDate
+            FROM
+                Media tv
+            JOIN
+                tv.children seasons
+            LEFT JOIN
+                seasons.children episodes
+            WHERE
+                tv.id = :id AND
+                tv.mediaType.name = 'TV_SHOW'
+            GROUP BY
+                seasons.id,
+                seasons.name,
+                seasons.description,
+                seasons.releaseDate
             """)
-    Page<TvShowSeasonWithMetadata> getTvShowSeasons(@Param("id") Long id, Pageable pageable);
+    Page<TvShowSeasonWithMetadata> getTvShowSeasons(
+            @Param("id") Long id,
+            Pageable pageable
+    );
 
     @Query("""
             SELECT EXISTS (
                 SELECT 1
-                FROM TvShowSeason s
-                JOIN s.tvShow tv
+                FROM Media tv
+                JOIN tv.children seasons
                 WHERE
-                    s.id = :seasonId AND
-                    tv.id = :showId
+                    tv.id = :showId AND
+                    seasons.id = :seasonId
             )
             """)
     boolean existsByShowIdAndSeasonId(@Param("showId") Long showId, @Param("seasonId") Long seasonId);

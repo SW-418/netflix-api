@@ -1,0 +1,2 @@
+ALTER TABLE user_watch_history
+DROP CONSTRAINT uq_user_watch_history_user_media;

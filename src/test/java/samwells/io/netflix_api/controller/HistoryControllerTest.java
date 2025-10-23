@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import samwells.io.netflix_api.dto.request.history.UserHistoryRequest;
 import samwells.io.netflix_api.entity.User;
+import samwells.io.netflix_api.repository.MediaRepository;
 import samwells.io.netflix_api.repository.UserRepository;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
@@ -30,6 +31,11 @@ class HistoryControllerTest {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    MediaRepository mediaRepository;
+
+    // TODO: We need to update these tests to generate the data rather than re-using the seed data for better isolation
+
     @Test
     void addHistory_withValidMovieRequest_addsWatchHistory() throws Exception {
         User user = new User();
@@ -41,7 +47,7 @@ class HistoryControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/watch-history")
-                        .content(objectMapper.writeValueAsString(new UserHistoryRequest(1L, null)))
+                        .content(objectMapper.writeValueAsString(new UserHistoryRequest(1L)))
                         .contentType("application/json")
                         .with(jwt().jwt(jwt -> jwt.claim("sub", String.valueOf(userId))))
         )
@@ -59,7 +65,7 @@ class HistoryControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/watch-history")
-                        .content(objectMapper.writeValueAsString(new UserHistoryRequest(null, 1L)))
+                        .content(objectMapper.writeValueAsString(new UserHistoryRequest(46L)))
                         .contentType("application/json")
                         .with(jwt().jwt(jwt -> jwt.claim("sub", String.valueOf(userId))))
         )
@@ -77,7 +83,7 @@ class HistoryControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/watch-history")
-                        .content(objectMapper.writeValueAsString(new UserHistoryRequest(null, null)))
+                        .content(objectMapper.writeValueAsString(new UserHistoryRequest(null)))
                         .contentType("application/json")
                         .with(jwt().jwt(jwt -> jwt.claim("sub", String.valueOf(userId))))
         )
@@ -85,7 +91,7 @@ class HistoryControllerTest {
     }
 
     @Test
-    void addHistory_withInvalidTvShowRequestWithBothParams_returnsBadRequest() throws Exception {
+    void addHistory_withInvalidTvShowSeasonRequest_returnsBadRequest() throws Exception {
         User user = new User();
         user.setUsername("test@test.com");
         user.setPassword("blahhhhhh");
@@ -95,7 +101,7 @@ class HistoryControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/watch-history")
-                        .content(objectMapper.writeValueAsString(new UserHistoryRequest(1L, 2L)))
+                        .content(objectMapper.writeValueAsString(new UserHistoryRequest(36L)))
                         .contentType("application/json")
                         .with(jwt().jwt(jwt -> jwt.claim("sub", String.valueOf(userId))))
         )
@@ -115,7 +121,7 @@ class HistoryControllerTest {
                 post("/api/v1/watch-history")
                         .content("""
                                     {
-                                        "movieId": abcde
+                                        "mediaId": abcde
                                     }
                                 """)
                         .contentType("application/json")
@@ -134,7 +140,7 @@ class HistoryControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/watch-history")
-                        .content(objectMapper.writeValueAsString(new UserHistoryRequest(null, 2L)))
+                        .content(objectMapper.writeValueAsString(new UserHistoryRequest(2L)))
                         .contentType("application/json")
         )
         .andExpect(status().isUnauthorized());
