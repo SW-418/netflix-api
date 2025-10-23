@@ -15,8 +15,8 @@ public record MovieResponse(
     public MovieResponse(Movie movie) {
         this (
                 movie.id(),
-                movie.description(),
                 movie.name(),
+                movie.description(),
                 movie.genre(),
                 movie.releaseDate()
         );
