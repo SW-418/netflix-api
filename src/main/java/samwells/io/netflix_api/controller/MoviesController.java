@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import samwells.io.netflix_api.dto.request.RatingRequest;
 import samwells.io.netflix_api.dto.response.MovieResponse;
 import samwells.io.netflix_api.model.Genre;
+import samwells.io.netflix_api.model.MediaType;
 import samwells.io.netflix_api.model.movie.Movie;
 import samwells.io.netflix_api.model.movie.MovieFilter;
 import samwells.io.netflix_api.service.movie.MovieService;
 import samwells.io.netflix_api.service.ratings.RatingsService;
+import samwells.io.netflix_api.util.UserUtil;
 import samwells.io.netflix_api.validation.ValidEnum;
 
 import java.util.List;
@@ -38,9 +40,9 @@ public class MoviesController {
         return ResponseEntity.ok(movies.stream().map(MovieResponse::new).toList());
     }
 
-    @PostMapping("/{id}/ratings")
-    ResponseEntity<Void> rateMovie(@Valid RatingRequest request) {
-
+    @PutMapping("/{id}/ratings")
+    ResponseEntity<Void> rateMovie(@PathVariable Long id, @RequestBody @Valid RatingRequest request) {
+        ratingsService.addRating(UserUtil.getUserId(), id, MediaType.MOVIE, request.rating());
 
         return ResponseEntity.ok().build();
     }
