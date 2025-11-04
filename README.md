@@ -47,18 +47,6 @@ You will build a backend that manages movies, series, users, subscriptions, watc
 
 ---
 
-## REST API Endpoints (Examples)
-- `POST /auth/register` – create a new user
-- `POST /auth/login` – authenticate user, return JWT
-- `GET /movies` – list movies (filterable by genre, rating)
-- `POST /ratings` – submit a rating for a movie or episode
-- `GET /users/{id}/watch-history` – retrieve user’s watched content
-- `GET /reports/top-movies` – retrieve top-rated movies
-
-> Endpoints should follow REST best practices with proper status codes and validation.
-
----
-
 ## Acceptance Criteria
 
 - [ ] Users can register, login, and update profiles
