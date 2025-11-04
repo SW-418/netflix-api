@@ -1,5 +1,6 @@
 package samwells.io.netflix_api.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -7,13 +8,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import samwells.io.netflix_api.dto.request.RatingRequest;
 import samwells.io.netflix_api.dto.response.TvShowEpisodeResponse;
 import samwells.io.netflix_api.dto.response.TvShowResponse;
 import samwells.io.netflix_api.dto.response.TvShowSeasonResponse;
 import samwells.io.netflix_api.model.Genre;
+import samwells.io.netflix_api.model.MediaType;
 import samwells.io.netflix_api.model.tvshow.TvShow;
 import samwells.io.netflix_api.model.tvshow.TvShowFilter;
+import samwells.io.netflix_api.service.ratings.RatingsService;
 import samwells.io.netflix_api.service.tvshow.TvShowService;
+import samwells.io.netflix_api.util.UserUtil;
 import samwells.io.netflix_api.validation.ValidEnum;
 
 import java.util.List;
@@ -23,6 +28,7 @@ import java.util.List;
 @RequestMapping("/api/v1/tv-shows")
 public class TvShowsController {
     private final TvShowService tvShowService;
+    private final RatingsService ratingsService;
 
     @GetMapping
     ResponseEntity<List<TvShowResponse>> getTvShows(
@@ -75,5 +81,15 @@ public class TvShowsController {
                 .toList();
 
         return ResponseEntity.ok(seasons);
+    }
+
+    @PutMapping("/episodes/{episodeId}/ratings")
+    ResponseEntity<Void> getTvShowSeasonEpisodes(
+            @PathVariable("episodeId") Long episodeId,
+            @RequestBody @Valid RatingRequest request
+    ) {
+        ratingsService.addRating(UserUtil.getUserId(), episodeId, MediaType.TV_SHOW_EPISODE, request.rating());
+
+        return ResponseEntity.ok().build();
     }
 }
