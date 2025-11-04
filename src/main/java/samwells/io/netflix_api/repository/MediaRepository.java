@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import samwells.io.netflix_api.entity.Media;
 import samwells.io.netflix_api.model.Genre;
+import samwells.io.netflix_api.model.MediaType;
 
 @Repository
 public interface MediaRepository extends JpaRepository<Media, Long> {
@@ -20,5 +21,21 @@ public interface MediaRepository extends JpaRepository<Media, Long> {
     Page<Media> getMovies(
             @Param("genre") Genre genre,
             Pageable pageable
+    );
+
+    @Query("""
+            SELECT EXISTS (
+                SELECT
+                    1
+                FROM
+                    Media m
+                WHERE
+                    m.id = :id AND
+                    m.mediaType.name = :media_type
+            )
+            """)
+    boolean existsByIdAndMediaType(
+            @Param("id") Long id,
+            @Param("media_type") MediaType mediaType
     );
 }
