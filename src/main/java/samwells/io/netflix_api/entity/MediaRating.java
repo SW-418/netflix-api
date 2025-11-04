@@ -38,4 +38,9 @@ public class MediaRating {
 
     @Version
     Long version;
+
+    public MediaRating(User user, Media media) {
+        this.user = user;
+        this.media = media;
+    }
 }
