@@ -6,5 +6,5 @@ import samwells.io.netflix_api.entity.User;
 public interface UserDetailsService extends UserDetailsManager {
     String login(String username, String password);
     boolean userExists(Long userId);
-    User loadUserById(Long userId);
+    User getReferenceById(Long userId);
 }

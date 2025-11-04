@@ -78,7 +78,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public User loadUserById(Long userId) {
+    public User getReferenceById(Long userId) {
         return userRepository.getReferenceById(userId);
     }
 }
