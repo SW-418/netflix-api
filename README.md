@@ -33,7 +33,6 @@ You will build a backend that manages movies, series, users, subscriptions, watc
 ### 4. Queries & Reports
 - Top-rated movies by genre
 - Most-watched series
-- Recommendations based on watch history or genre
 
 ---
 
@@ -57,12 +56,4 @@ You will build a backend that manages movies, series, users, subscriptions, watc
 - [ ] Aggregation queries (top movies, most-watched series) return correct results
 - [ ] Database schema enforces relationships and constraints (foreign keys, unique keys)
 - [ ] Transaction handling ensures data consistency (e.g., ratings + watch history)
-- [ ] Optional: Recommendations based on watch history or genre
 - [ ] Unit & integration tests for API endpoints
-
----
-
-## Optional Extensions
-- Role-based access control (USER vs ADMIN)
-- Caching for frequent queries (top movies, recommendations)
-- Pagination for listing endpoints  
