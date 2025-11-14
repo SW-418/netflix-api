@@ -40,6 +40,17 @@ public class MoviesController {
         return ResponseEntity.ok(movies.stream().map(MovieResponse::new).toList());
     }
 
+    @GetMapping(path = "/top-rated")
+    ResponseEntity<List<MovieResponse>> getTopRatedMovies(
+            @RequestParam(required = false) @Validated @ValidEnum(enumClass = Genre.class, required = false) String genre,
+            @PageableDefault(page = 0, size = 15) Pageable pageable
+    ) {
+        Genre parsedGenre = genre == null ? null : Genre.valueOf(genre);
+        List<Movie> movies = movieService.getTopRatedMovies(parsedGenre, pageable);
+
+        return ResponseEntity.ok(movies.stream().map(MovieResponse::new).toList());
+    }
+
     @PutMapping("/{id}/ratings")
     ResponseEntity<Void> rateMovie(@PathVariable Long id, @RequestBody @Valid RatingRequest request) {
         ratingsService.addRating(UserUtil.getUserId(), id, MediaType.MOVIE, request.rating());

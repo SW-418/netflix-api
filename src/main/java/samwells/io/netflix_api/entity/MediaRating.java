@@ -8,10 +8,10 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@Entity(name = "MediaRating")
 @Table(name = "media_rating")
 public class MediaRating {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
